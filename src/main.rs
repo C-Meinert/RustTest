@@ -1,33 +1,58 @@
-use std::env;
+use rand::Rng;
+use std::cmp::Ordering;
+use std::io;
 
-#[derive(Debug)]
-struct Structure(u8);
-
-#[derive(Debug)]
-struct Deep(Structure);
-
-#[derive(Debug)]
-struct Person<'a> {
-    name: &'a str,
-    age: u8
-}
+const MAX_POINTS: u32 = 100_000;
 
 fn main() {
-    let curDir = env::current_dir().unwrap();
+    // guessing_game();
+    variables_mutability();
+}
 
-    println!("Hello, world!\nCurrent Dir {0}", curDir.display());
+fn variables_mutability() {
+    // let mut x = 5;
+    // println!("The value of x is: {}", x);
+    // x = 6;
+    // println!("The value fo x is: {}", x);
 
-    let tempStruct = Structure(42);
+    // let x = 5;
+    // let x = x + 1;
+    // let x = x * 2;
+    // println!("The value fo x is: {}", x);
 
-    let name = "Peter";
-    let age = 16;
-    let peter = Person { name, age};
+    let spaces = "    ";
+    let spaces = spaces.len();
+    println!("The value fo spaces is: {}", spaces);
+}
 
-    println!("{:?}", peter);
-    println!("{:?}", tempStruct);
-    println!("{:?}", Deep(Structure(tempStruct.0)));
+fn guessing_game() {
+    println!("Guess the number!");
 
-    let mut thing : u8 = 5;
-    thing += 1;
-    println!("{value:0>4}", value=thing);
+    let secret_number: u32 = rand::thread_rng().gen_range(1..101);
+    // println!("The secret number is: {}", secret_number);
+
+    loop {
+        println!("Please input your guess: ");
+
+        let mut guess = String::new();
+        io::stdin()
+            .read_line(&mut guess)
+            .expect("Failed to read line");
+
+        let guess: u32 = match guess.trim().parse() {
+            Ok(num) => num,
+            Err(_) => continue,
+        };
+
+        println!("You guessed: {}", guess);
+
+        match guess.cmp(&secret_number) {
+            Ordering::Less => println!("Too small!"),
+            Ordering::Greater => println!("Too big!"),
+            Ordering::Equal => {
+                println!("You win!");
+                break;
+            }
+        }
+    }
 }
